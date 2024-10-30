@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
-public class MixinTitleScreen {
-    
+public class Mixin_TitleScreen {
+
     @Inject(at = @At("HEAD"), method = "init()V")
     private void init(CallbackInfo info) {
-        ExampleMod.LOG.info("This line is printed by an example mod mixin from Fabric!");
+        ExampleMod.LOG.info("This line is printed by an example mod mixin from NeoForge!");
         ExampleMod.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
     }
 }
