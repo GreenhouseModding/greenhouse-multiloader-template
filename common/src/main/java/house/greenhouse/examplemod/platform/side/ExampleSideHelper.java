@@ -12,7 +12,7 @@ public interface ExampleSideHelper<S extends ExampleSideHelper<S>> extends Servi
 		var loaders = ServiceLoader.load(ExampleSideHelper.class);
 		// Maintain sanity
 		if (loaders.stream().findAny().isEmpty()) {
-			throw new IllegalStateException("No VigilSideHelper implementation found");
+			throw new IllegalStateException("No " + ExampleSideHelper.class.getName() + " implementation found");
 		}
 
 		return loaders
