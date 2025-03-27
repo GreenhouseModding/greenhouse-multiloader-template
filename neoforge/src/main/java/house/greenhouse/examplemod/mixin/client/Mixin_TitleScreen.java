@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class Mixin_TitleScreen {
 
-    @Inject(at = @At("HEAD"), method = "init()V")
-    private void init(CallbackInfo info) {
-        ExampleMod.LOG.info("This line is printed by an example mod mixin from NeoForge!");
-        ExampleMod.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
-    }
+	@Inject(at = @At("HEAD"), method = "init()V")
+	private void init(CallbackInfo info) {
+		ExampleMod.LOG.info("This line is printed by an example mod mixin from NeoForge!");
+		ExampleMod.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
+	}
 }

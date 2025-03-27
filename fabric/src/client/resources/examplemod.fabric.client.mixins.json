@@ -1,15 +1,15 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "house.greenhouse.examplemod.client.mixin",
-  "refmap": "client-${mod_id}.refmap.json",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [],
-  "client": [
-    "Mixin_TitleScreen"
-  ],
-  "server": [],
-  "injectors": {
-    "defaultRequire": 1
-  }
+	"required": true,
+	"minVersion": "0.8",
+	"package": "house.greenhouse.examplemod.client.mixin",
+	"refmap": "client-${mod_id}.refmap.json",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [],
+	"client": [
+		"Mixin_TitleScreen"
+	],
+	"server": [],
+	"injectors": {
+		"defaultRequire": 1
+	}
 }

@@ -8,8 +8,8 @@ import net.neoforged.fml.common.Mod;
 @Mod(ExampleMod.MOD_ID)
 public class ExampleModNeoForge {
 
-    public ExampleModNeoForge(IEventBus eventBus) {
-	    ExampleMod.setHelper(new ExamplePlatformHelperNeoForge());
-        ExampleMod.init();
-    }
+	public ExampleModNeoForge(IEventBus eventBus) {
+		ExampleMod.setHelper(new ExamplePlatformHelperNeoForge());
+		ExampleMod.init();
+	}
 }

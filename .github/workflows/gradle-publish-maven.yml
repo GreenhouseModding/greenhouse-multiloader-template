@@ -3,8 +3,8 @@ name: Publish to Maven
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [Publish to All]
-    types: [completed]
+    workflows: [ Publish to All ]
+    types: [ completed ]
 
 jobs:
   build:
