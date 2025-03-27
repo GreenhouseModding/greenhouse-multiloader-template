@@ -1,3 +1,5 @@
+import house.greenhouse.examplemod.gradle.Properties
+
 plugins {
 	id("conventions.common")
 }
@@ -21,6 +23,11 @@ configurations {
 }
 
 dependencies {
+	compileOnly(project(":common")) {
+		capabilities {
+			requireCapability("$group:${Properties.MOD_ID}")
+		}
+	}
 	"commonJava"(project(":common", "commonJava"))
 	"commonClientJava"(project(":common", "commonClientJava"))
 	"commonResources"(project(":common", "commonResources"))
@@ -32,11 +39,16 @@ tasks {
 	named<JavaCompile>("compileJava").configure {
 		dependsOn(configurations.getByName("commonJava"))
 		source(configurations.getByName("commonJava"))
+		dependsOn(configurations.getByName("commonClientJava"))
+		source(configurations.getByName("commonClientJava"))
 	}
 	named<ProcessResources>("processResources").configure {
 		dependsOn(configurations.getByName("commonResources"))
 		from(configurations.getByName("commonResources"))
 		from(configurations.getByName("commonResources"))
+		dependsOn(configurations.getByName("commonClientResources"))
+		from(configurations.getByName("commonClientResources"))
+		from(configurations.getByName("commonClientResources"))
 	}
 	named<ProcessResources>("processTestResources").configure {
 		dependsOn(configurations.getByName("commonTestResources"))

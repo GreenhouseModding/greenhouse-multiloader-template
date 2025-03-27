@@ -1,6 +1,5 @@
 import house.greenhouse.examplemod.gradle.Properties
 import house.greenhouse.examplemod.gradle.Versions
-import net.fabricmc.loom.task.RemapJarTask
 import org.gradle.jvm.tasks.Jar
 
 plugins {
@@ -16,26 +15,19 @@ repositories {
     }
 }
 
-dependencies {
-    minecraft("com.mojang:minecraft:${Versions.MINECRAFT}")
-    mappings(loom.officialMojangMappings())
-
-    modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
-    modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
-}
-
 loom {
-    val aw = file("src/main/resources/${Properties.MOD_ID}.accesswidener");
+    val aw = file("src/main/resources/${Properties.MOD_ID}.accesswidener")
     if (aw.exists())
         accessWidenerPath.set(aw)
     mixin {
         defaultRefmapName.set("${Properties.MOD_ID}.refmap.json")
     }
+    splitEnvironmentSourceSets()
     mods {
         register(Properties.MOD_ID) {
             sourceSet(sourceSets["main"])
             sourceSet(sourceSets["test"])
+            sourceSet(sourceSets["client"])
         }
     }
     runs {
@@ -66,9 +58,48 @@ loom {
     }
 }
 
+sourceSets {
+    getByName("main") {
+        compileClasspath += project(":common").sourceSets["main"].output
+        runtimeClasspath += project(":common").sourceSets["main"].output
+    }
+    getByName("client") {
+        compileClasspath += sourceSets["main"].compileClasspath
+        runtimeClasspath += sourceSets["main"].runtimeClasspath
+        compileClasspath += project(":common").sourceSets["client"].output
+    }
+    getByName("test") {
+        runtimeClasspath += sourceSets["main"].runtimeClasspath
+        runtimeClasspath += sourceSets["client"].output
+        runtimeClasspath += project(":common").sourceSets["client"].output
+    }
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:${Versions.MINECRAFT}")
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${Versions.PARCHMENT_MINECRAFT}:${Versions.PARCHMENT}")
+    })
+
+    modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
+    modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
+    modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
+}
+
 tasks {
     named<ProcessResources>("processResources").configure {
         exclude("${Properties.MOD_ID}.cfg")
+    }
+    named<JavaCompile>("compileClientJava").configure {
+        dependsOn(configurations.getByName("commonClientJava"))
+        source(configurations.getByName("commonClientJava"))
+    }
+    named<ProcessResources>("processClientResources").configure {
+        dependsOn(configurations.getByName("commonClientResources"))
+        from(configurations.getByName("commonClientResources"))
+        from(configurations.getByName("commonClientResources"))
     }
 }
 

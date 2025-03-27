@@ -24,10 +24,17 @@
     ],
     "preLaunch": [
       "house.greenhouse.examplemod.ExampleModFabricPre"
-    ]
+    ],
+	  "client": [
+		  "house.greenhouse.examplemod.client.ExampleModClientFabric"
+	  ],
+	  "server": [
+		  "house.greenhouse.examplemod.server.dedicated.ExampleModDedicatedFabric"
+	  ]
   },
   "mixins": [
-    "${mod_id}.mixins.json",
+	  "${mod_id}.mixins.json",
+	  "${mod_id}.client.mixins.json",
     "${mod_id}.fabric.mixins.json"
   ],
   "depends": {

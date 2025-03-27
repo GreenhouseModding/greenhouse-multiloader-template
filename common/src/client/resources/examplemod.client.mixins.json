@@ -1,11 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "house.greenhouse.examplemod.mixin",
-  "refmap": "${mod_id}.refmap.json",
+  "package": "house.greenhouse.examplemod.client.mixin",
+  "refmap": "client-${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
-  "server": [],
+  "client": [
+    "Mixin_Minecraft"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

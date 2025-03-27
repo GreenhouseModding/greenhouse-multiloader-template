@@ -9,7 +9,7 @@ import net.neoforged.fml.common.Mod;
 public class ExampleModNeoForge {
 
     public ExampleModNeoForge(IEventBus eventBus) {
+	    ExampleMod.setHelper(new ExamplePlatformHelperNeoForge());
         ExampleMod.init();
-        ExampleMod.setHelper(new ExamplePlatformHelperNeoForge());
     }
 }

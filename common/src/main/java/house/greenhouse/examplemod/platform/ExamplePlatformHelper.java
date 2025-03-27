@@ -1,7 +1,8 @@
 package house.greenhouse.examplemod.platform;
 
-public interface ExamplePlatformHelper {
+import house.greenhouse.examplemod.platform.side.Side;
 
+public interface ExamplePlatformHelper {
     /**
      * Gets the current platform
      *
@@ -23,4 +24,10 @@ public interface ExamplePlatformHelper {
      * @return True if in a development environment, false otherwise.
      */
     boolean isDevelopmentEnvironment();
+
+	/**
+	 * Gets the current distribution side.
+	 * @return The distribution side that this mod is running in.
+	 */
+	Side getSide();
 }

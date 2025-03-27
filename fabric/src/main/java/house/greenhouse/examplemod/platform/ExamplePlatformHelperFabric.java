@@ -1,9 +1,9 @@
 package house.greenhouse.examplemod.platform;
 
+import house.greenhouse.examplemod.platform.side.Side;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class ExamplePlatformHelperFabric implements ExamplePlatformHelper {
-
     @Override
     public Platform getPlatform() {
         return Platform.FABRIC;
@@ -18,4 +18,12 @@ public class ExamplePlatformHelperFabric implements ExamplePlatformHelper {
     public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
+
+	@Override
+	public Side getSide() {
+		return switch (FabricLoader.getInstance().getEnvironmentType()) {
+			case CLIENT -> Side.CLIENT;
+			case SERVER -> Side.DEDICATED;
+		};
+	}
 }
