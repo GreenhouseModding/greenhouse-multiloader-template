@@ -22,9 +22,6 @@
 		"main": [
 			"house.greenhouse.examplemod.ExampleModFabric"
 		],
-		"preLaunch": [
-			"house.greenhouse.examplemod.ExampleModFabricPre"
-		],
 		"client": [
 			"house.greenhouse.examplemod.client.ExampleModClientFabric"
 		],

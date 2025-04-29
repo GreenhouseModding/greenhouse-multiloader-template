@@ -31,6 +31,8 @@ public class ExampleMod {
 	}
 
 	public static void setHelper(ExamplePlatformHelper helper) {
+		if (ExampleMod.helper != null)
+			return;
 		ExampleMod.helper = helper;
 	}
 
