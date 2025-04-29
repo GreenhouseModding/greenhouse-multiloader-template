@@ -81,7 +81,6 @@ publishMods {
 	displayName = "v${Versions.MOD} (Minecraft ${Versions.MINECRAFT})"
 	version = "${Versions.MOD}+${Versions.MINECRAFT}"
 	type = STABLE
-	dryRun = true
 
 	github {
 		accessToken = providers.environmentVariable("GITHUB_TOKEN")
