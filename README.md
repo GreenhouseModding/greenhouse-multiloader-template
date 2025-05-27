@@ -16,12 +16,13 @@ It is ideal to change any mention of `examplemod` within the codebase when creat
 The main changes from the Multiloader Template, which we have forked are:
 
 - Uses Kotlin DSL instead of Groovy DSL.
-- Rewrites to expanded properties, to fit loader conventions and create less overhead.
-- Removal of access transformer file from Fabric's build and refmap line in common mixins.json for NeoForge.
-- Platform Helpers are done without services, instead being added to the common class within the Fabric mod init and
-  NeoForge init.
-	- Make sure to keep Fabric load order in mind whilst using the platform helper. Do not add any methods that could be called before mod init inside the helper.
 - Cut down on a few classes.
+- Removed MinecraftForge support.
+  - This will not be added, I'd rather not support a dying loader that does not want to improve.
+- Rewrites to expanded properties to fit loader conventions and create less overhead.
+- Removal of access transformer file from Fabric's build and refmap line in common mixins.json for NeoForge.
+- Added sided platform helpers for usage with client and server.
+- Moved the access point for platform helpers to common's main class (house.greenhouse.examplemod.ExampleMod) with an additional casted reference inside the individual platform helper class.
 - Set up client mixins from the example in the `mixin.client` package, following convention for Greenhouse mixins.
 - Modmuss' mod publish plugin is set up for both loaders. For CurseForge, Modrinth and GitHub.
 	- Feel free to remove any of these, you may desire GitHub only if the mod is supposed to be an internal library
