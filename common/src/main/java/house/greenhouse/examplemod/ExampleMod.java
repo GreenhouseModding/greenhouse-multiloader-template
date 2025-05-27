@@ -19,6 +19,7 @@ public class ExampleMod {
 	private static ExampleSideHelper<?> sideHelper;
 
 	public static void init() {
+		ExampleMod.LOG.info("Hello {} world!", getHelper().getPlatformName());
 	}
 
 	public static Logger getLogger(String... subsystems) {

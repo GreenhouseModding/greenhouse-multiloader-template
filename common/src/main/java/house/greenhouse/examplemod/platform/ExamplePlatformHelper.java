@@ -1,5 +1,6 @@
 package house.greenhouse.examplemod.platform;
 
+import house.greenhouse.examplemod.ExampleMod;
 import house.greenhouse.examplemod.platform.side.Side;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -13,6 +14,18 @@ public interface ExamplePlatformHelper extends ServiceLoader.Provider<ExamplePla
 	 * @return An enum value representing the current platform.
 	 */
 	Platform getPlatform();
+
+	/**
+	 * Gets a user-friendly string of the current platform's name.
+	 *
+	 * @return A string representing the current platform's name.
+	 */
+	default String getPlatformName() {
+		return switch (getPlatform()) {
+			case FABRIC -> "Fabric";
+			case NEOFORGE -> "NeoForge";
+		};
+	}
 
 	/**
 	 * Checks if a mod with the given id is loaded.
