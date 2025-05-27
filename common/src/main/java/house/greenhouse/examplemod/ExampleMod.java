@@ -19,7 +19,7 @@ public class ExampleMod {
 	private static ExampleSideHelper<?> sideHelper;
 
 	public static void init() {
-		ExampleMod.LOG.info("Hello {} world!", getHelper().getPlatformName());
+		LOG.info("Initializing {} Common on platform {}", ExampleMod.MOD_NAME, getHelper().getPlatformName());
 	}
 
 	public static Logger getLogger(String... subsystems) {
