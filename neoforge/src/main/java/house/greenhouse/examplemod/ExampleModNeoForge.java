@@ -1,6 +1,5 @@
 package house.greenhouse.examplemod;
 
-import house.greenhouse.examplemod.platform.ExamplePlatformHelperNeoForge;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
@@ -8,7 +7,6 @@ import net.neoforged.fml.common.Mod;
 public class ExampleModNeoForge {
 
 	public ExampleModNeoForge(IEventBus eventBus) {
-		ExampleMod.setHelper(new ExamplePlatformHelperNeoForge());
 		ExampleMod.init();
 	}
 }

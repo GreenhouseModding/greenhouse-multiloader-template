@@ -19,7 +19,6 @@ public class ExampleMod {
 	private static ExampleSideHelper<?> sideHelper;
 
 	public static void init() {
-		sideHelper = ExampleSideHelper.load();
 	}
 
 	public static Logger getLogger(String... subsystems) {
@@ -27,16 +26,16 @@ public class ExampleMod {
 	}
 
 	public static ExamplePlatformHelper getHelper() {
+		if (helper == null) {
+			helper = ExamplePlatformHelper.load();
+		}
 		return helper;
 	}
 
-	public static void setHelper(ExamplePlatformHelper helper) {
-		if (ExampleMod.helper != null)
-			return;
-		ExampleMod.helper = helper;
-	}
-
 	public static ExampleSideHelper<?> getSideHelper() {
+		if (sideHelper == null) {
+			sideHelper = ExampleSideHelper.load();
+		}
 		return sideHelper;
 	}
 }

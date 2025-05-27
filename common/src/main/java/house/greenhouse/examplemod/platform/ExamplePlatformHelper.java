@@ -1,8 +1,12 @@
 package house.greenhouse.examplemod.platform;
 
 import house.greenhouse.examplemod.platform.side.Side;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface ExamplePlatformHelper {
+import java.util.ServiceLoader;
+
+public interface ExamplePlatformHelper extends ServiceLoader.Provider<ExamplePlatformHelper> {
+
 	/**
 	 * Gets the current platform
 	 *
@@ -31,4 +35,19 @@ public interface ExamplePlatformHelper {
 	 * @return The distribution side that this mod is running in.
 	 */
 	Side getSide();
+
+	@ApiStatus.Internal
+	static ExamplePlatformHelper load() {
+		var loaders = ServiceLoader.load(ExamplePlatformHelper.class);
+		// Maintain sanity
+		if (loaders.stream().findAny().isEmpty()) {
+			throw new IllegalStateException("No " + ExamplePlatformHelper.class.getName() + " implementation found");
+		}
+
+		return loaders
+				.stream()
+				.findFirst()
+				.orElseThrow()
+				.get();
+	}
 }
