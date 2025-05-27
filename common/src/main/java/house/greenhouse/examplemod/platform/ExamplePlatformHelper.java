@@ -7,6 +7,9 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.ServiceLoader;
 
 public interface ExamplePlatformHelper extends ServiceLoader.Provider<ExamplePlatformHelper> {
+	static ExamplePlatformHelper getInstance() {
+		return ExampleMod.getHelper();
+	}
 
 	/**
 	 * Gets the current platform
