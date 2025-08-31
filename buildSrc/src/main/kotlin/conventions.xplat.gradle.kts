@@ -1,5 +1,5 @@
 import house.greenhouse.examplemod.gradle.Properties
-import house.greenhouse.examplemod.gradle.Versions
+import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
 	base
@@ -8,14 +8,24 @@ plugins {
 	`maven-publish`
 }
 
-base.archivesName.set("${Properties.ARCHIVES_NAME}-${project.name}")
+// https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
+val libs = the<LibrariesForLibs>()
+
+base.archivesName.set("${Properties.MOD_ID}-${project.name}")
 group = Properties.GROUP
-version = "${Versions.MOD}+${Versions.MINECRAFT}"
+version = "${Properties.MOD_VERSION}+${libs.versions.minecraft}"
 
 java {
-	toolchain.languageVersion.set(JavaLanguageVersion.of(Versions.JAVA))
+	toolchain.languageVersion.set(JavaLanguageVersion.of(Properties.JAVA_VERSION))
 	withSourcesJar()
 	withJavadocJar()
+}
+
+sourceSets {
+	create("gametest") {
+		compileClasspath += main.get().compileClasspath
+		runtimeClasspath += main.get().runtimeClasspath
+	}
 }
 
 repositories {
@@ -43,10 +53,9 @@ repositories {
 	maven("https://maven.fabricmc.net/") {
 		name = "Fabric"
 	}
-}
-
-dependencies {
-	implementation("org.jetbrains:annotations:24.1.0")
+	maven("https://maven.terraformersmc.com/") {
+		name = "TerraformersMC"
+	}
 }
 
 tasks {
@@ -67,18 +76,18 @@ tasks {
 			attributes["Implementation-Title"] = project.name
 			attributes["Implementation-Version"] = archiveVersion
 			attributes["Implementation-Vendor"] = Properties.MOD_AUTHOR
-			attributes["Built-On-Minecraft"] = Versions.MINECRAFT
+			attributes["Built-On-Minecraft"] = libs.versions.minecraft.asProvider().get()
 		}
 	}
 
 	val expandProps = mapOf(
-		"mod_version" to Versions.MOD,
+		"mod_version" to Properties.MOD_VERSION,
 		"group" to project.group, //Else we target the task's group.
-		"minecraft_version" to Versions.MINECRAFT,
-		"fabric_api_version" to Versions.FABRIC_API,
-		"fabric_loader_version" to Versions.FABRIC_LOADER,
-		"fabric_minecraft_version_range" to Versions.FABRIC_MINECRAFT_RANGE,
-		"fabric_loader_range" to Versions.FABRIC_LOADER_RANGE,
+		"minecraft_version" to libs.versions.minecraft.asProvider().get(),
+		"fabric_api_version" to libs.versions.fabric.api.get(),
+		"fabric_loader_version" to libs.versions.fabric.loader.get(),
+		"fabric_minecraft_version_range" to Properties.FABRIC_MINECRAFT_RANGE,
+		"fabric_loader_range" to Properties.FABRIC_LOADER_RANGE,
 		"mod_name" to Properties.MOD_NAME,
 		"mod_author" to Properties.MOD_AUTHOR,
 		"neoforge_mod_contributors" to Properties.MOD_CONTRIBUTORS.joinToString(),
@@ -86,10 +95,10 @@ tasks {
 		"mod_id" to Properties.MOD_ID,
 		"mod_license" to Properties.LICENSE,
 		"mod_description" to Properties.DESCRIPTION,
-		"neoforge_version" to Versions.NEOFORGE,
-		"neoforge_minecraft_version_range" to Versions.NEOFORGE_MINECRAFT_RANGE,
-		"neoforge_loader_version_range" to Versions.NEOFORGE_LOADER_RANGE,
-		"java_version" to Versions.JAVA,
+		"neoforge_version" to libs.versions.neoforge.get(),
+		"neoforge_minecraft_version_range" to Properties.NEOFORGE_MINECRAFT_RANGE,
+		"neoforge_loader_version_range" to Properties.NEOFORGE_LOADER_RANGE,
+		"java_version" to Properties.JAVA_VERSION,
 		"curseforge_page" to Properties.CURSEFORGE_PAGE,
 		"modrinth_page" to Properties.MODRINTH_PAGE,
 		"sources" to Properties.GITHUB_REPO
@@ -116,7 +125,7 @@ publishing {
 	repositories {
 		maven {
 			name = "Greenhouse"
-			url = uri("https://maven.greenhouseteam.dev/releases")
+			url = uri("https://repo.greenhouse.house/releases")
 			credentials {
 				username = System.getenv("MAVEN_USERNAME")
 				password = System.getenv("MAVEN_PASSWORD")

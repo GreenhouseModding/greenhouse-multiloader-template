@@ -1,7 +1,5 @@
 import house.greenhouse.examplemod.gradle.Properties
-import house.greenhouse.examplemod.gradle.Versions
 import org.apache.tools.ant.filters.LineContains
-import org.gradle.jvm.tasks.Jar
 
 plugins {
 	id("conventions.loader")
@@ -9,24 +7,37 @@ plugins {
 	id("me.modmuss50.mod-publish-plugin")
 }
 
+dependencies {
+	testImplementation(libs.neoforge.test.framework)
+}
+
 neoForge {
-	version = Versions.NEOFORGE
+	version = libs.versions.neoforge.get()
 	parchment {
-		minecraftVersion = Versions.PARCHMENT_MINECRAFT
-		mappingsVersion = Versions.PARCHMENT
+		minecraftVersion = libs.versions.minecraft.parchment.get()
+		mappingsVersion = libs.versions.parchment.get()
 	}
 	addModdingDependenciesTo(sourceSets["test"])
 
-	val at = project(":common").file("src/main/resources/${Properties.MOD_ID}.cfg")
+	val at = project(":xplat").file("src/main/resources/${Properties.MOD_ID}.cfg")
 	if (at.exists())
 		setAccessTransformers(at)
 	validateAccessTransformers = true
+
+	mods {
+		register(Properties.MOD_ID) {
+			sourceSet(sourceSets["test"])
+		}
+		register(Properties.MOD_ID + "_gametest") {
+			sourceSet(sourceSets["gametest"])
+		}
+	}
 
 	runs {
 		configureEach {
 			systemProperty("forge.logging.markers", "REGISTRIES")
 			systemProperty("forge.logging.console.level", "debug")
-			systemProperty("neoforge.enabledGameTestNamespaces", Properties.MOD_ID)
+			systemProperty("neoforge.enabledGameTestNamespaces", "${Properties.MOD_ID},${Properties.MOD_ID}_test")
 		}
 		create("client") {
 			client()
@@ -43,23 +54,18 @@ neoForge {
 			sourceSet = sourceSets["test"]
 			jvmArguments.set(setOf("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true"))
 		}
-	}
-
-	mods {
-		register(Properties.MOD_ID) {
-			sourceSet(sourceSets["main"])
-			sourceSet(sourceSets["test"])
+		create("gameTest") {
+			type = "gameTestServer"
+			ideName = "NeoForge Game Tests (:${project.name})"
+			gameDirectory.set(file("build/gametest"))
+			programArgument("--nogui")
+			sourceSet = sourceSets["gametest"]
+			loadedMods = setOf(
+				mods.getByName(Properties.MOD_ID),
+				mods.getByName("${Properties.MOD_ID}_gametest")
+			)
+			systemProperty("neoforge.enabledGameTestNamespaces", Properties.MOD_ID + "_gametest")
 		}
-	}
-}
-
-sourceSets {
-	getByName("main") {
-		compileClasspath += project(":common").sourceSets["main"].output
-		runtimeClasspath += project(":common").sourceSets["main"].output
-	}
-	getByName("test") {
-		runtimeClasspath += sourceSets["main"].runtimeClasspath
 	}
 }
 
@@ -72,28 +78,34 @@ tasks {
 }
 
 publishMods {
-	file.set(tasks.named<Jar>("jar").get().archiveFile)
+	file.set(tasks.named<org.gradle.jvm.tasks.Jar>("jar").get().archiveFile)
 	modLoaders.add("neoforge")
 	changelog = rootProject.file("CHANGELOG.md").readText()
-	displayName = "v${Versions.MOD} (NeoForge ${Versions.MINECRAFT})"
-	version = "${Versions.MOD}+${Versions.MINECRAFT}-neoforge"
-	type = STABLE
+	displayName = "v${Properties.MOD_VERSION} (NeoForge ${libs.versions.minecraft.asProvider().get()})"
+	version = "${Properties.MOD_VERSION}+${libs.versions.minecraft.asProvider().get()}-neoforge"
+	type = BETA
 
 	curseforge {
 		projectId = Properties.CURSEFORGE_PROJECT_ID
 		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
 
-		minecraftVersions.add(Versions.MINECRAFT)
+		minecraftVersions.addAll(Properties.SUPPORTED_MINECRAFT_VERSIONS)
 		javaVersions.add(JavaVersion.VERSION_21)
 
 		clientRequired = true
 		serverRequired = true
+
+		optional("emi")
+		optional("item-descriptions")
 	}
 
 	modrinth {
 		projectId = Properties.MODRINTH_PROJECT_ID
 		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
 
-		minecraftVersions.add(Versions.MINECRAFT)
+		minecraftVersions.addAll(Properties.SUPPORTED_MINECRAFT_VERSIONS)
+
+		optional("emi")
+		optional("item-descriptions")
 	}
 }

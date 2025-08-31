@@ -1,17 +1,37 @@
 import house.greenhouse.examplemod.gradle.Properties
-import house.greenhouse.examplemod.gradle.Versions
-import org.gradle.jvm.tasks.Jar
 
 plugins {
 	id("conventions.loader")
-	id("fabric-loom")
-	id("me.modmuss50.mod-publish-plugin")
+	alias(libs.plugins.loom)
+	alias(libs.plugins.mod.publish)
 }
 
-repositories {
-	maven {
-		name = "TerraformersMC"
-		url = uri("https://maven.terraformersmc.com/")
+dependencies {
+	minecraft(libs.minecraft)
+	mappings(loom.layered {
+		officialMojangMappings()
+		parchment(libs.parchment)
+	})
+
+	modImplementation(libs.fabric.loader)
+	modImplementation(libs.fabric.api)
+	modLocalRuntime(libs.mod.menu)
+}
+
+fabricApi {
+	configureDataGeneration {
+		modId = Properties.MOD_ID + "_datagen"
+		outputDirectory = file("../xplat/src/generated/resources")
+		createSourceSet = true
+		createRunConfiguration = false
+		addToResources = false
+	}
+	@Suppress("UnstableApiUsage")
+	configureTests {
+		modId = Properties.MOD_ID + "_tests"
+		enableGameTests = false
+		enableClientGameTests = false
+		clearRunDirectory = true
 	}
 }
 
@@ -25,7 +45,6 @@ loom {
 	mods {
 		register(Properties.MOD_ID) {
 			sourceSet(sourceSets["main"])
-			sourceSet(sourceSets["test"])
 		}
 	}
 	runs {
@@ -35,6 +54,7 @@ loom {
 			setSource(sourceSets["test"])
 			ideConfigGenerated(true)
 			vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
+			runDir("runs/client")
 		}
 		named("server") {
 			server()
@@ -42,41 +62,39 @@ loom {
 			setSource(sourceSets["test"])
 			ideConfigGenerated(true)
 			vmArgs("-Dmixin.debug.verbose=true", "-Dmixin.debug.export=true")
+			runDir("runs/server")
 		}
 		register("datagen") {
 			server()
 			configName = "Fabric Datagen"
-			setSource(sourceSets["test"])
+			setSource(sourceSets["datagen"])
 			ideConfigGenerated(true)
-			vmArg("-Dfabric-api.datagen")
-			vmArg("-Dfabric-api.datagen.output-dir=${file("../common/src/generated/resources")}")
-			vmArg("-Dfabric-api.datagen.modid=${Properties.MOD_ID}")
+			vmArgs(
+				"-Dfabric-api.datagen",
+				"-Dfabric-api.datagen.output-dir=${file("../xplat/src/generated/resources")}",
+				"-Dfabric-api.datagen.modid=${Properties.MOD_ID}_datagen"
+			)
 			runDir("build/datagen")
+		}
+		register("gameTest") {
+			server()
+			configName = "Fabric Game Tests"
+			runDir("build/gametest")
+			setSource(sourceSets["gametest"])
+			ideConfigGenerated(true)
+			property("fabric-api.gametest")
+			runDir("build/gametest")
 		}
 	}
 }
 
-sourceSets {
-	getByName("main") {
-		compileClasspath += project(":common").sourceSets["main"].output
-		runtimeClasspath += project(":common").sourceSets["main"].output
+gradle.projectsEvaluated {
+	sourceSets {
+		getByName("datagen") {
+			compileClasspath += project(":xplat").sourceSets["main"].output
+			runtimeClasspath += project(":xplat").sourceSets["main"].output
+		}
 	}
-	getByName("test") {
-		runtimeClasspath += sourceSets["main"].runtimeClasspath
-	}
-}
-
-dependencies {
-	minecraft("com.mojang:minecraft:${Versions.MINECRAFT}")
-	mappings(loom.layered {
-		officialMojangMappings()
-		parchment("org.parchmentmc.data:parchment-${Versions.PARCHMENT_MINECRAFT}:${Versions.PARCHMENT}")
-	})
-
-	modImplementation("net.fabricmc:fabric-loader:${Versions.FABRIC_LOADER}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
-	modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC_API}")
-	modLocalRuntime("com.terraformersmc:modmenu:${Versions.MOD_MENU}")
 }
 
 tasks {
@@ -86,28 +104,32 @@ tasks {
 }
 
 publishMods {
-	file.set(tasks.named<Jar>("remapJar").get().archiveFile)
+	file.set(tasks.named<org.gradle.jvm.tasks.Jar>("remapJar").get().archiveFile)
 	modLoaders.add("fabric")
 	changelog = rootProject.file("CHANGELOG.md").readText()
-	displayName = "v${Versions.MOD} (Fabric ${Versions.MINECRAFT})"
-	version = "${Versions.MOD}+${Versions.MINECRAFT}-fabric"
-	type = STABLE
+	displayName = "v${Properties.MOD_VERSION} (Fabric ${libs.versions.minecraft.asProvider().get()})"
+	version = "${Properties.MOD_VERSION}+${libs.versions.minecraft.asProvider().get()}-fabric"
+	type = BETA
 
 	curseforge {
 		projectId = Properties.CURSEFORGE_PROJECT_ID
 		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
 
-		minecraftVersions.add(Versions.MINECRAFT)
+		minecraftVersions.addAll(Properties.SUPPORTED_MINECRAFT_VERSIONS)
 		javaVersions.add(JavaVersion.VERSION_21)
 
 		clientRequired = true
 		serverRequired = true
+
+		requires("fabric-api")
 	}
 
 	modrinth {
 		projectId = Properties.MODRINTH_PROJECT_ID
 		accessToken = providers.environmentVariable("MODRINTH_TOKEN")
 
-		minecraftVersions.add(Versions.MINECRAFT)
+		minecraftVersions.addAll(Properties.SUPPORTED_MINECRAFT_VERSIONS)
+
+		requires("fabric-api")
 	}
 }
