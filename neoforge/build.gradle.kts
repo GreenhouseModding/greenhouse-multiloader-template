@@ -26,6 +26,7 @@ neoForge {
 
 	mods {
 		register(Properties.MOD_ID) {
+			sourceSet(sourceSets["main"])
 			sourceSet(sourceSets["test"])
 		}
 		register(Properties.MOD_ID + "_gametest") {
@@ -37,7 +38,6 @@ neoForge {
 		configureEach {
 			systemProperty("forge.logging.markers", "REGISTRIES")
 			systemProperty("forge.logging.console.level", "debug")
-			systemProperty("neoforge.enabledGameTestNamespaces", "${Properties.MOD_ID},${Properties.MOD_ID}_test")
 		}
 		create("client") {
 			client()

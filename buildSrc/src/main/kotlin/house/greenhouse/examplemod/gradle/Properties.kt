@@ -14,16 +14,16 @@ object Properties {
 
 	val SUPPORTED_MINECRAFT_VERSIONS = listOf("1.21.6", "1.21.7", "1.21.8")
 
-	const val FABRIC_LOADER_RANGE = ">=0.15"
-	const val FABRIC_MINECRAFT_RANGE = ">=1.21 <=1.21.1"
+	const val FABRIC_LOADER_RANGE = ">=0.16"
+	const val FABRIC_MINECRAFT_RANGE = ">=1.21.6 <=1.21.8"
 
 	const val NEOFORGE_LOADER_RANGE = "[4,)"
-	const val NEOFORGE_MINECRAFT_RANGE = "[1.21.1,1.21.2)"
+	const val NEOFORGE_MINECRAFT_RANGE = "[1.21.8,1.21.9)"
 
 	const val CURSEFORGE_PAGE = "https://www.curseforge.com/minecraft/mc-mods/curseforge-project"
 	const val CURSEFORGE_PROJECT_ID = "000000"
 	const val MODRINTH_PAGE = "https://modrinth.com/mod/modrinth-project"
 	const val MODRINTH_PROJECT_ID = "????????"
 	const val GITHUB_REPO = "GreenhouseModding/greenhouse-multiloader-template"
-	const val GITHUB_COMMITISH = "1.21.1"
+	const val GITHUB_COMMITISH = "1.21.8"
 }

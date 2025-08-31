@@ -104,7 +104,7 @@ tasks {
 		"sources" to Properties.GITHUB_REPO
 	)
 
-	val processResourcesTasks = listOf("processResources", "processTestResources", "processDatagenResources")
+	val processResourcesTasks = listOf("processResources", "processTestResources", "processDatagenResources", "processGametestResources")
 
 	withType<ProcessResources>().matching { processResourcesTasks.contains(it.name) }.configureEach {
 		inputs.properties(expandProps)

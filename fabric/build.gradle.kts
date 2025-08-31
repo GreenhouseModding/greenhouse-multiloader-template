@@ -45,6 +45,10 @@ loom {
 	mods {
 		register(Properties.MOD_ID) {
 			sourceSet(sourceSets["main"])
+			sourceSet(sourceSets["test"])
+		}
+		register(Properties.MOD_ID + "_gametest") {
+			sourceSet(sourceSets["gametest"])
 		}
 	}
 	runs {
